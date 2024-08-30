@@ -28,7 +28,7 @@ def generate_password():
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
 def save_password():
-    website = website_entry.get()
+    website = website_entry.get().lower()
     email = email_entry.get()
     password = password_entry.get()
     new_data = {website: {
@@ -57,6 +57,19 @@ def save_password():
             website_entry.delete(0, END)
             password_entry.delete(0, END)
 
+# ---------------------------- FIND PASSWORD ------------------------------- #
+
+def find_password():
+    website = website_entry.get().lower()
+    try:
+        with open('data.json', 'r') as f:
+            data = json.load(f)
+            password = data[website]['password']
+            messagebox.showinfo(title=website.title(), message=f'email: {email_entry.get()}\npassword: {password}')
+    except KeyError:
+        messagebox.showerror(title='Saved Password', message=f'No password found for {website}')
+            
+
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -72,9 +85,12 @@ canvas.grid(column=1, row=0)
 website_label = Label(text="Website:")
 website_label.grid(column=0, row=1)
 
-website_entry = Entry(width=40)
+website_entry = Entry(width=23)
 website_entry.focus()
-website_entry.grid(column=1, row=1, columnspan=2)
+website_entry.grid(column=1, row=1)
+
+search_button = Button(text='Search', command=find_password, width=13)
+search_button.grid(column=2, row=1)
 
 email_label = Label(text="Email/Username:")
 email_label.grid(column=0, row=2)
